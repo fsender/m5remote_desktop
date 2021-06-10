@@ -3,8 +3,8 @@
 #include <ESP8266WiFi.h>
 #include "ESPAsyncUDP.h"
 
-const char* ssid = "510快乐源泉";//wifi账号
-const char* password = "Aa123123";//wifi密码
+const char* ssid = "your wifi account";//wifi账号
+const char* password = "your wifi password";//wifi密码
 #define LISTEN_PORT 3333
 
 AsyncUDP udp;

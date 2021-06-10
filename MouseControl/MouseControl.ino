@@ -168,7 +168,7 @@ void checkzoom(){
         Mouse.release(MOUSE_LEFT);
         Keyboard.begin();
         delay(3000);
-        Keyboard.print("13579abcde\n");
+        Keyboard.print("your pc password\n");
         Keyboard.releaseAll();
         Keyboard.end();
         moveDelta=0;
