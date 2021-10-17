@@ -28,6 +28,7 @@ Author:
 #include <M5Stack.h>
 #if defined(ARDUINO_M5Stack_Core_ESP32) || defined(ARDUINO_M5STACK_FIRE)
 #include <M5StackUpdater.h>     // https://github.com/tobozo/M5Stack-SD-Updater/
+#include <Wire.h> //drive faces.
 #endif
 
 #include "src/TCPReceiver.h"
@@ -42,6 +43,7 @@ static uint32_t remote_port;
 static IPAddress remote_ip;
 static  uint8_t just_Pressed=1;
 uint8_t getFacesVal();
+void UDPprint(char c);
 
 void setup(void)
 {
@@ -61,7 +63,8 @@ void setup(void)
     }
   #endif
 #endif
-
+  Wire.begin();
+  pinMode(KEYBOARD_INT, INPUT_PULLUP);
   lcd.begin();
   lcd.setColorDepth(24);
   lcd.setRotation(0);
@@ -145,7 +148,7 @@ void loop(void)
   }
   if(just_Pressed==1 && !digitalRead(BUTTON_C_PIN)) UDPprint('\xb2'); // raw '>'
   }
-  else if((faces_ch=getFacesVal())!=0){
+  if((faces_ch=getFacesVal())!=0){
     UDPprint(faces_ch);
   }
 }
@@ -160,6 +163,7 @@ void UDPprint(char c){
 
 uint8_t getFacesVal(){
   if(digitalRead(KEYBOARD_INT) == LOW) {
+    Serial.println("connected to me.");
   Wire.requestFrom(KEYBOARD_I2C_ADDR, 1);  // request 1 byte from keyboard
   while (!(Wire.available())) yield();
   return Wire.read();                  // receive a byte as character

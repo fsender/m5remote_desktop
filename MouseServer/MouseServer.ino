@@ -13,7 +13,7 @@ uint8_t broadcasted=0;
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(57600);
   Serial.println();
 
   Serial.printf("Connecting to %s ", ssid);
