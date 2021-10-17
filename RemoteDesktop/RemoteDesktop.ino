@@ -1,6 +1,8 @@
 //Createen Studios 
 //M5Stack Remote Desktop
-//版本1.0.0
+//版本1.0.1
+//增加对faces 的支持
+
 //改编自原作者 お父ちゃん 的原项目 ESP32 ScreenShotReceiver 
 //功能是传输电脑截图，并利用UDP进行简易鼠标控制。此项目还需要依赖
 //MouseServer.ino -ESP8266接收端

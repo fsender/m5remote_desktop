@@ -35,7 +35,8 @@ void setup() {
   // initialize the buttons' inputs:
   // initialize mouse control:
   Mouse.begin();
-  Serial1.begin(115200);
+  Keyboard.begin();
+  Serial1.begin(57600);
 }
 char dur=0,zoomlen=0,noPress=0;//0:左右，1：上下
 char lastSameFlag='\0';
@@ -111,6 +112,40 @@ void loop() {
       moveDelta=0;
       lastSameFlag='\0';
     }
+    if(rcv == '\''){
+      while(!Serial.available());
+      int kbdkey = Serial.read();
+      if(kbdkey>=0x90 && kbdkey<=0x9b)
+        Keyboard.write(kbdkey+50);  //f1-f12键
+      else if(kbdkey==0xb8)  //faces insert
+        Keyboard.write(KEY_INSERT);
+      else if(kbdkey==0xba)  //faces tab
+        Keyboard.write(KEY_TAB);
+      else if(kbdkey==0xbb)  //faces home
+        Keyboard.write(KEY_HOME);
+      else if(kbdkey==0xbc)  //faces end
+        Keyboard.write(KEY_END);
+      else if(kbdkey==0xbd)  //faces pgup
+        Keyboard.write(KEY_PAGE_UP);
+      else if(kbdkey==0xbe)  //faces pgdn
+        Keyboard.write(KEY_PAGE_DOWN);
+      else if(kbdkey==0x7f)  //faces delete
+        Keyboard.write(KEY_DELETE);
+      else if(kbdkey==0x08)  //faces backspace
+        Keyboard.write(KEY_BACKSPACE);
+      else if(kbdkey==0x0d)  //faces return
+        Keyboard.write(KEY_RETURN);
+      else if(kbdkey==0xb7)  //faces up arrow
+        Keyboard.write(KEY_UP_ARROW);
+      else if(kbdkey==0xbf)  //faces left arrow
+        Keyboard.write(KEY_LEFT_ARROW);
+      else if(kbdkey==0xc0)  //faces down arrow
+        Keyboard.write(KEY_DOWN_ARROW);
+      else if(kbdkey==0xc1)  //faces right arrow
+        Keyboard.write(KEY_RIGHT_ARROW);
+      else if(kbdkey!=0x00 || kbdkey!=0xff)
+        Keyboard.write(kbdkey);
+    }
     }
   }
   if(millis()-getmillis>130) {
@@ -147,13 +182,12 @@ void loop() {
 }
 void checkzoom(){
       if (millis()-lastScroll<550) {
-        Keyboard.begin();
         Keyboard.press(KEY_LEFT_GUI);
         if(zoomlen) Keyboard.press(KEY_ESC);
         else Keyboard.press('=');
         delay(5);
         Keyboard.releaseAll();
-        Keyboard.end();
+        //Keyboard.end();
         zoomlen=!zoomlen;
         moveDelta=0;
         noPress=1;
@@ -166,11 +200,11 @@ void checkzoom(){
         Mouse.press(MOUSE_LEFT);
         delay(10);
         Mouse.release(MOUSE_LEFT);
-        Keyboard.begin();
+        //Keyboard.begin();
         delay(3000);
         Keyboard.print("your pc password\n");
         Keyboard.releaseAll();
-        Keyboard.end();
+        //Keyboard.end();
         moveDelta=0;
         noPress=1;
       }

@@ -41,8 +41,27 @@ void setup()
     //Serial.printf("Received %d bytes from %s, port %d\n", packetSize, udp.remoteIP().toString().c_str(), udp.remotePort());
     // 读取udp数据包
     const char * dt = (const char *)packet.data();
-    if (dt[0]=='<' || dt[0]=='>' || dt[0]=='^' || dt[0]==':' || dt[0]=='{' || dt[0]=='}' ){
-      Serial.write(dt[0]);
+    if (dt[0]=='\xad'){
+      Serial.write('<');
+    }
+    else if(dt[0]=='\xb2'){
+      Serial.write('>');
+    }
+    else if(dt[0]=='\xaf'){
+      Serial.write('^');
+    }
+    else if(dt[0]=='\xb1'){
+      Serial.write(':');
+    }
+    else if(dt[0]=='\xae'){
+      Serial.write('{');
+    }
+    else if(dt[0]=='\xb0' ){
+      Serial.write('}');
+    }
+    else if (dt[0]=='\''){
+      Serial.write('\'');
+      Serial.write(dt[1]);
     }
     //向串口调试器打印信息
     //Serial.printf("UDP packet contents %d chars: %s\n", len, incomingPacket);
