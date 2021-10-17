@@ -1,7 +1,7 @@
 //Createen Studios 
 //M5Stack Remote Desktop
 //版本1.0.1
-//增加对faces 的支持
+//add support for M5 faces.
 
 //改编自原作者 お父ちゃん 的原项目 ESP32 ScreenShotReceiver 
 //功能是传输电脑截图，并利用UDP进行简易鼠标控制。此项目还需要依赖
@@ -33,12 +33,16 @@ Author:
 #include "src/TCPReceiver.h"
 #define LISTEN_PORT 3333
 #define TRANSFER_PORT 5026
+#define KEYBOARD_I2C_ADDR     0X08
+#define KEYBOARD_INT          5
 static LGFX lcd;
 static TCPReceiver recv;
 static WiFiUDP udp;
 static uint32_t remote_port;
 static IPAddress remote_ip;
 static  uint8_t just_Pressed=1;
+uint8_t getFacesVal();
+
 void setup(void)
 {
   Serial.begin(115200);
@@ -124,21 +128,25 @@ void setup(void)
 
 void loop(void)
 {
+  uint8_t faces_ch=0;
   recv.loop();
   if(just_Pressed!=255){
     just_Pressed=1;
   if(!digitalRead(BUTTON_A_PIN)) {
-    if(!digitalRead(BUTTON_C_PIN)) UDPprint('<');
-    else if(!digitalRead(BUTTON_B_PIN)) UDPprint('{');
-    else UDPprint('^');
+    if(!digitalRead(BUTTON_C_PIN)) UDPprint('\xad'); // raw <
+    else if(!digitalRead(BUTTON_B_PIN)) UDPprint('\xae'); // raw '{'
+    else UDPprint('\xaf'); // raw '^'
     just_Pressed=0;
   }
   if(just_Pressed && !digitalRead(BUTTON_B_PIN)) {
-    if(!digitalRead(BUTTON_C_PIN)) UDPprint('}');
-    else UDPprint(':');
+    if(!digitalRead(BUTTON_C_PIN)) UDPprint('\xb0'); // raw '}'
+    else UDPprint('\xb1'); // raw ':'
     just_Pressed =2;
   }
-  if(just_Pressed==1 && !digitalRead(BUTTON_C_PIN)) UDPprint('>');
+  if(just_Pressed==1 && !digitalRead(BUTTON_C_PIN)) UDPprint('\xb2'); // raw '>'
+  }
+  else if((faces_ch=getFacesVal())!=0){
+    UDPprint(faces_ch);
   }
 }
 void UDPprint(char c){
@@ -149,3 +157,13 @@ void UDPprint(char c){
   udp.endPacket();
   cmillis=millis();
 }
+
+uint8_t getFacesVal(){
+  if(digitalRead(KEYBOARD_INT) == LOW) {
+  Wire.requestFrom(KEYBOARD_I2C_ADDR, 1);  // request 1 byte from keyboard
+  while (!(Wire.available())) yield();
+  return Wire.read();                  // receive a byte as character
+  }
+  else return 0;
+}
+
