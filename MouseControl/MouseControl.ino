@@ -45,6 +45,7 @@ unsigned long getmillis=0;
 unsigned long pressmillis=0;
 unsigned long funmillis=0;
 unsigned long lastScroll=0;
+//void (*yourKeyFunction[16])(void);
 void loop() {
   // read the buttons:
   // if X or Y is non-zero, move:
@@ -116,8 +117,14 @@ void loop() {
     if(rcv == '\''){
       while(!Serial1.available());
       int kbdkey = Serial1.read();
-      if(kbdkey>=0x90 && kbdkey<=0x9b)
+      if(kbdkey>=0x90 && kbdkey<=0x9b)//faces f1-f12键
         Keyboard.write(kbdkey+50);  //f1-f12键
+        /*
+      else if(kbdkey>=0x9c && kbdkey<=0xa2)  //faces insert
+        yourKeyFunction[kbdkey-0x9c]();
+      else if(kbdkey>=0xa5 && kbdkey<=0xac)  //faces insert
+        yourKeyFunction[kbdkey-0x9e]();
+        */
       else if(kbdkey==0xb8)  //faces insert
         Keyboard.write(KEY_INSERT);
       else if(kbdkey==0xba)  //faces tab
@@ -144,11 +151,13 @@ void loop() {
         Keyboard.write(KEY_DOWN_ARROW);
       else if(kbdkey==0xc1)  //faces right arrow
         Keyboard.write(KEY_RIGHT_ARROW);
+      else if(kbdkey==0xaf)  //faces esc
+        Keyboard.write(KEY_ESC);
       else if(kbdkey!=0x00 || kbdkey!=0xff)
         Keyboard.write(kbdkey);
     }
   }
-  if(millis()-getmillis>130) {
+  if(millis()-getmillis>160) {
     moveDelta=0;
     noPress=0;
     if(lastSameFlag== ':'){
