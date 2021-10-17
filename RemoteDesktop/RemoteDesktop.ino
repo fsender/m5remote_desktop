@@ -44,6 +44,7 @@ static IPAddress remote_ip;
 static  uint8_t just_Pressed=1;
 uint8_t getFacesVal();
 void UDPprint(char c);
+void UDPprint2(char c);
 
 void setup(void)
 {
@@ -149,7 +150,7 @@ void loop(void)
   if(just_Pressed==1 && !digitalRead(BUTTON_C_PIN)) UDPprint('\xb2'); // raw '>'
   }
   if((faces_ch=getFacesVal())!=0){
-    UDPprint(faces_ch);
+    UDPprint2(faces_ch);
   }
 }
 void UDPprint(char c){
@@ -160,10 +161,19 @@ void UDPprint(char c){
   udp.endPacket();
   cmillis=millis();
 }
+void UDPprint2(char c){
+  static uint32_t cmillis=0;
+  if(millis()-cmillis<20) return;
+  udp.beginPacket(remote_ip,remote_port);
+  udp.write('\'');
+  udp.write(c);
+  udp.endPacket();
+  cmillis=millis();
+}
 
 uint8_t getFacesVal(){
   if(digitalRead(KEYBOARD_INT) == LOW) {
-    Serial.println("connected to me.");
+  //  Serial.println("connected to me.");
   Wire.requestFrom(KEYBOARD_I2C_ADDR, 1);  // request 1 byte from keyboard
   while (!(Wire.available())) yield();
   return Wire.read();                  // receive a byte as character

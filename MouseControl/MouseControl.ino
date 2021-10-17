@@ -112,9 +112,10 @@ void loop() {
       moveDelta=0;
       lastSameFlag='\0';
     }
+    }
     if(rcv == '\''){
-      while(!Serial.available());
-      int kbdkey = Serial.read();
+      while(!Serial1.available());
+      int kbdkey = Serial1.read();
       if(kbdkey>=0x90 && kbdkey<=0x9b)
         Keyboard.write(kbdkey+50);  //f1-f12键
       else if(kbdkey==0xb8)  //faces insert
@@ -145,7 +146,6 @@ void loop() {
         Keyboard.write(KEY_RIGHT_ARROW);
       else if(kbdkey!=0x00 || kbdkey!=0xff)
         Keyboard.write(kbdkey);
-    }
     }
   }
   if(millis()-getmillis>130) {
